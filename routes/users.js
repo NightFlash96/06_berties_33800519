@@ -20,7 +20,7 @@ router.get('/register', function (req, res, next) {
 
 router.post('/registered', function (req, res, next) {
     // Hash
-    const bcrypt = require('bcrypt');
+    // const bcrypt = require('bcrypt');
     const saltRounds = 10;
     const plainPassword = req.body.password;
 
