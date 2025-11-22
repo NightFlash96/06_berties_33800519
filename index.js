@@ -12,8 +12,8 @@ const port = process.env.PORT || 8000
 // Define the database connection pool
 const db = mysql.createPool({
     host: process.env.DB_HOST ||'localhost',
-    user: process.env.DB_USER || 'berties_books_app',
-    password: process.env.DB_PASSWORD || 'qwertyuiop',
+    user: process.env.DB_USER || 'berties_books_app' ,
+    password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'berties_books',
     waitForConnections: true,
     connectionLimit: Number(process.env.DB_CONNECTION_LIMIT) || 10,
