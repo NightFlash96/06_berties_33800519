@@ -1,5 +1,6 @@
 // Import express, ejs, mysql2, path, and dotenv modules
 var express = require ('express')
+var session = require('express-session')
 var ejs = require('ejs')
 var mysql = require('mysql2')
 const path = require('path')
@@ -8,6 +9,16 @@ require('dotenv').config()
 // Create the express application object
 const app = express()
 const port = process.env.PORT || 8000
+
+// Create a session
+app.use(session({
+    secret: "somerandomstuff",
+    resave: false,
+    saveUninitialised: false,
+    cookie: {
+        expires: 600000
+    }
+}))
 
 // Define the database connection pool
 const db = mysql.createPool({

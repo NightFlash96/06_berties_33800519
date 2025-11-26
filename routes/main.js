@@ -2,6 +2,8 @@
 const express = require("express")
 const router = express.Router()
 
+const { redirectLogin } = require('../middleware/middleware.js');
+
 // Handle our routes
 router.get('/',function(req, res, next){
     res.render('index.ejs')
@@ -28,6 +30,15 @@ router.post('/bookadded', function (req, res, next) {
             res.send("This book has been added to the databse, name: "+ req.body.name + " price: "+ req.body.price)         
         })
     })
+
+router.get('/logout', redirectLogin, (req,res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.redirect('./')
+        }
+        res.send('You have been logged out. <a href='+'./'+'>Home</a>')
+    })
+})
 
 // Export the router object so index.js can access it
 module.exports = router

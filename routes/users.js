@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
+const { redirectLogin } = require('../middleware/middleware.js');
+
 // function auditLog(username, success) {
 //     db.query("INSERT INTO audit (username, datetime, success) VALUES (?, NOW(), ?)", [username, success], (err, result) => {
 //         if (err) {
@@ -45,7 +47,7 @@ router.post('/registered', function (req, res, next) {
     })
 }); 
 
-router.get('/list', function(req, res, next) {
+router.get('/list', redirectLogin, function(req, res, next) {
     let sqlquery = "SELECT * FROM users"; // query database to get all the books
     // execute sql query
     db.query(sqlquery, (err, result) => {
@@ -92,7 +94,9 @@ router.post('/loggedin', function (req, res, next) {
                     next (err)
                 }
                 else if (result == true) { // if match, log successful attempt
-                    res.send('You are now logged in!')
+                    req.session.userID = req.body.username; // create session variable
+                    res.render('logged-in.ejs')
+                    // res.send('You are now logged in!')
                     db.query("INSERT INTO audit (username, datetime, success, eventType) VALUES (?, NOW(), 1, 'login')", [req.body.username], (err, result) => {
                         if (err) {
                             next(err)
@@ -118,7 +122,7 @@ router.post('/loggedin', function (req, res, next) {
     });
 });
 
-router.get('/audit', function(req, res, next) {
+router.get('/audit', redirectLogin, function(req, res, next) {
     let sqlquery = "SELECT * FROM audit"; // query database to get all the audit logs
     // execute sql query
     db.query(sqlquery, (err, result) => {
