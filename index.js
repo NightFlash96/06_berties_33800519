@@ -1,10 +1,11 @@
 // Import express, ejs, mysql2, path, and dotenv modules
-var express = require ('express')
-var session = require('express-session')
-var ejs = require('ejs')
-var mysql = require('mysql2')
-const path = require('path')
-require('dotenv').config()
+var express = require ('express');
+var session = require('express-session');
+var ejs = require('ejs');
+var mysql = require('mysql2');
+const path = require('path');
+const expressSanitiser = require('express-sanitizer');
+require('dotenv').config();
 
 // Create the express application object
 const app = express()
@@ -19,6 +20,9 @@ app.use(session({
         expires: 600000
     }
 }))
+
+// Create an input sanitiser
+app.use(expressSanitiser());
 
 // Define the database connection pool
 const db = mysql.createPool({

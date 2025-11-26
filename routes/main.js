@@ -18,10 +18,12 @@ router.get('/books/addbook', function (req, res, next) {
 });
 
 router.post('/bookadded', function (req, res, next) {
+    let name = req.sanitize(req.body.name);
+    let price = req.sanitize(req.body.price);
     //saving to the database
     let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)"
     // execute sql query
-    let newrecord = [req.body.name, req.body.price]
+    let newrecord = [name, price]
     db.query(sqlquery, newrecord, (err, result) => {
         if (err) {
             next(err)

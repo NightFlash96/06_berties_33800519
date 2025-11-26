@@ -10,7 +10,7 @@ router.get('/search',function(req, res, next){
 
 router.get('/search_result', function (req, res, next) {
     // searching in the database for the keyword from the search form
-    let keyword = (req.query.search_text || '').trim();
+    let keyword = (req.sanitize(req.query.search_text) || '').trim();
     let like = '%' + keyword + '%';
     let sqlquery = "SELECT * FROM books WHERE name LIKE ?"; // adjust column name if different (e.g. title)
     // execute sql query
