@@ -6,10 +6,16 @@
   </head>
   <body>
     <h1><%=shopData.shopName%> Weather Edition</h1>
-    <form action="search_result" method="GET">
-      <p></p>
-      <input id="keyword" type="text" name="search_text">
+    <form action="/weather" method="POST">
+      <p>Search Cities:</p>
+      <input id="keyword" type="text" name="search_text" value="<%= city %>" placeholder="Enter city name">
       <input type="submit" value="Search" >
     </form>
+    <% if (weatherMsg) { %>
+      <div>
+        <h2>Weather Information:</h2>
+        <p><%- weatherMsg %></p>
+      </div>
+    <% } %>
   </body>
 </html>

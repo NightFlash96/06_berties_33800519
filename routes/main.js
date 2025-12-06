@@ -1,6 +1,7 @@
 // Create a new router
 const express = require("express");
 const router = express.Router();
+require('dotenv').config();
 
 const { redirectLogin } = require('../middleware/middleware.js');
 
@@ -34,10 +35,16 @@ router.post('/bookadded', function (req, res, next) {
     )
 })
 
+// This route displays the weather form
 router.get('/weather', function (req, res, next) {
+    res.render("weather.ejs", {weatherMsg: null, city: ""});
+});
+
+// This route sends the weather request to the API and displays the result
+router.post('/weather', function (req, res, next) {
     const request = require('request');
-    let apiKey = "e888d6e17e402124969b351c1535b04b";
-    let city = "london";
+    let apiKey = process.env.APIKEY;
+    let city = req.sanitize(req.body.search_text) || "london";
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
     
     request(url, function (err, response, body) {
@@ -46,11 +53,21 @@ router.get('/weather', function (req, res, next) {
         } else {
             // res.send(body);
             var weather = JSON.parse(body)
-            var wmsg = "It is "+ weather.main.temp +
-            " degrees Celsius in " + weather.name + 
-            "! <br> The humidity now is: " +
-            weather.main.humidity;
-            res.send(wmsg);z
+
+            if (weather!==undefined && weather!==undefined){
+                var winfo =
+                    "Temperature: " + weather.main.temp + " °C<br>" +
+                    "Feels like: " + weather.main.feels_like + " °C<br>" +
+                    "Humidity: " + weather.main.humidity + " %<br>" +
+                    "Pressure: " + weather.main.pressure + " hPa<br>" +
+                    "Visibility: " + weather.visibility + " meters<br>" +
+                    "Wind Speed: " + weather.wind.speed + " m/s<br>";
+                var windir = weather.wind.deg;
+
+                res.render("weather.ejs", {weatherMsg: winfo, city: city});
+            } else {
+                res.render("weather.ejs", {weatherMsg: "City not found or API error.", city: city});
+            }
         }
      });
 })
