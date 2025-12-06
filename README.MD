@@ -14,6 +14,36 @@ A small Node.js/Express demo application used in a Dynamic Web Applications modu
 - MySQL (`mysql2` driver)
 - `dotenv` for configuration
 
+## API Integration
+
+The application integrates with the **OpenWeatherMap API** to provide weather information. The weather feature is accessible via the `/weather` route:
+
+- **GET /weather**: Displays the weather search form
+- **POST /weather**: Accepts a city name from user input and fetches current weather data from the OpenWeatherMap API
+  - The city parameter is sanitised using `req.sanitize()` before being sent to the API
+  - The API response is parsed and displayed to the user with temperature, humidity, and other weather details
+  - If the city is not found or the API returns an error, a user-friendly error message is displayed
+  - The API key is stored securely in the `.env` file as `APIKEY` and accessed via `process.env.APIKEY`
+
+### Books API
+
+The application also includes an internal **Books REST API** (`routes/api.js`) that returns book data in JSON format. This API supports flexible filtering and sorting:
+
+- **GET /api/books**: Returns all books or filtered results based on query parameters
+  - `search` (optional): Filter by book name using pattern matching (e.g., `/api/books?search=fiction`)
+  - `minprice` (optional): Filter books by minimum price (e.g., `/api/books?minprice=5`)
+  - `maxprice` (optional): Filter books by maximum price (e.g., `/api/books?maxprice=20`)
+  - `sort` (optional): Sort results by `price` or `name` (e.g., `/api/books?sort=price`)
+  - Query parameters can be combined (e.g., `/api/books?search=novel&minprice=10&maxprice=50&sort=price`)
+
+**SQL Injection Protection:**
+
+The Books API is protected against SQL injection attacks through:
+
+1. **Parameterised Queries**: All user-supplied values are passed as parameters (`?` placeholders) rather than concatenated into the SQL string. This ensures the database driver treats them as data, not executable SQL code.
+2. **Input Sanitisation**: Each parameter is sanitised using `req.sanitize()` before being added to the parameter array, removing any potentially malicious content.
+3. **Whitelist Validation for Sort**: The `sort` parameter is validated against an allowedlist of safe column names (`["price", "name"]`). Only if the sort value matches one of these allowed values is it used in the query, preventing column name injection attacks.
+
 ## Prerequisites
 - Node.js (v14+ recommended)
 - MySQL server
